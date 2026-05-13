@@ -5,6 +5,8 @@ Jianpu in Lilypond, from https://ssb22.user.srcf.net/mwrhome/jianpu-ly.html
 
 (also mirrored at https://ssb22.gitlab.io/mwrhome/jianpu-ly.html just in case, and available via `pip install jianpu-ly` or `pipx run jianpu-ly`)
 
+Some notes by Kai2510: https://www.cnblogs.com/zarya/articles/18984098/jianpu-ly-orchestra
+
 jianpu-ly is a Python program (compatible with both Python 2 and Python 3) that assists with printing jianpu (numbered musical notation) in the GNU Lilypond music typesetter. The jianpu is written on a modiﬁed-appearance “stave” in Lilypond, which means Lilypond’s typesetting capabilities (lyric spacing, slurs, beams etc) will apply to the jianpu without needing to add a 5-line stave. If you prefer, the generated code for the jianpu stave may also be placed in a score with other types of stave.
 
 Using jianpu-ly requires some technical knowledge.  If you don't know what a command line is, what a text editor is, what a directory is or what Python is, then please find out about these things before attempting to use jianpu-ly.  It is not an extension to Lilypond front-ends like Frescobaldi; it is a preprocessor that currently requires you to have command-line experience.

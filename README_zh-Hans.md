@@ -4,6 +4,8 @@ Lilypond 简谱，来自 https://ssb22.user.srcf.net/mwrhome/jianpu-ly.html
 
 （为以防万一，还在 https://ssb22.gitlab.io/mwrhome/jianpu-ly.html 上做了镜像，可通过 pip install jianpu-ly 或 pipx run jianpu-ly 获取）。
 
+Kai2510的使用笔记与进阶教程：https://www.cnblogs.com/zarya/articles/18984098/jianpu-ly-orchestra
+
 jianpu-ly 是一个 Python 程序（兼容 Python 2 和 Python 3），用于协助在 GNU 软件 Lilypond 中打印简谱（数字谱）。简谱是写在 Lilypond 中经过修改的 “谱表 ”上的，这意味着 Lilypond 的排版功能（歌词间距、圆滑线、符杠等）将适用于简谱，而无需增加 一个五线谱。如果你愿意，生成的简谱代码也可以与其他类型的谱表一起放在乐谱中。
 
 使用 jianpu-ly 需要一些技术知识。如果你不知道什么是命令行，什么是文本编辑器，什么是目录，或者什么是Python，那么请在尝试使用 jianpu-ly 之前了解这些内容。它不是像 Frescobaldi 那样的 Lilypond 前端扩展；它是一个预处理器，目前需要你有命令行经验。

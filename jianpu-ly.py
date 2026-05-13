@@ -166,6 +166,7 @@ Split MIDI files per part: PartMidi
 按声部导出MIDI文件： PartMidi
 Ignored: % a comment
 忽略： % 注释
+弹拨乐技法符号(需要pipa font)： ^\pipa"A" _\pipa"n"
 """
 
 import sys,os,re,shutil
@@ -511,6 +512,15 @@ jianpuGraceCurveStart =
 
 jianpuGraceCurveEnd =
 #(make-span-event 'JianpuGraceCurveEvent STOP)
+
+pipa =
+#(define-music-function (parser location text) (markup?)
+   #{ 
+     -\markup {
+       \override #'(font-name . "Pipa font")
+       #text
+     } 
+   #})
 %%===========================================================
 """ % {3.5: -0.2, 2.5: +0.32}[grace_height]
     return r+"\n%{ The jianpu-ly input was:\n" + inDat.strip().replace("%}","%/}")+"\n%}\n\n"

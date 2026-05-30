@@ -4,7 +4,7 @@
 
 r"""
 # Jianpu (numbered musical notaion) for Lilypond
-# v1.866 (c) 2012-2026 Silas S. Brown
+# v1.868 (c) 2012-2026 Silas S. Brown
 # v1.826 (c) 2024 Unbored
 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -160,6 +160,8 @@ Instrumental breaks in vocal music: 1 [( 2 3 )] 4
 诗歌的器乐部分： 1 [( 2 3 )] 4
 Other Lilypond code: LP: (block of code) :LP (each delimeter at start of its line)
 其它 Lilypond 代码： LP: (代码块) :LP （每个分隔符必须位于各行行首）
+Lilypond header additions: LPH: (definitions) :LPH (each at start of line)
+Lilypond头代码： LPH: (定义) :LPH （每个分隔符必须位于各行行首）
 Unicode approximation instead of Lilypond: Unicode
 用 Unicode 近似值代替 Lilypond 代码： Unicode
 Split MIDI files per part: PartMidi
@@ -1544,7 +1546,7 @@ def getLY(score,headers=None,have_final_barline=True):
    aftrnext = None
    aftrnext2 = None ; DS = "}"
    isInHarmonic = False
-   out_of_line_LP = ""
+   LP_between_head_and_first_score = ""
    # Please be careful adding extra re.sub's here: they will apply
    # to the WHOLE SCORE, including Lilypond blocks, headers, etc.
    # See comment below for a place where you can add re.sub's that
@@ -1554,17 +1556,18 @@ def getLY(score,headers=None,have_final_barline=True):
    for line in score.split("\n"):
     line = fix_fullwidth(line).strip()
     line=re.sub(r"^%%\s*tempo:\s*(\S+)\s*$",r"\1",line) # to provide an upgrade path for jihuan-tian's fork
-    if line.startswith("LP:"):
+    if line.startswith("LP:") or line.startswith("LPH:"):
         # Escaped LilyPond block.  Thanks to James Harkins for this suggestion.
         # (Our internal barcheck does not understand code in LP blocks, so keep it to complete bars.)
         escaping = 1+len(out)
-        if len(line)>len("LP:"): out.append(line[3:]+"\n") # remainder of current line
-    elif line.startswith(":LP"):
-        if r"\paper {" in "".join(out[escaping-1:]): # if someone's trying to override \paper settings, we don't want this inline in the score
-            out_of_line_LP += "".join(out[escaping-1:])
+        esc,rest = line.split(':',1)
+        if rest.strip(): out.append(rest.strip()+"\n") # remainder of current line
+    elif line.startswith(":LP") or line.startswith(":LPH"):
+        if line.startswith(":LPH") or r"\paper {" in "".join(out[escaping-1:]):
+            LP_between_head_and_first_score += "".join(out[escaping-1:])
             del out[escaping-1:]
         escaping = 0
-        if line.replace(":LP","").strip(): sys.stderr.write("Warning: current implementation ignores anything after :LP on same line\n") # TODO
+        if re.sub('^:LPH?','',line).strip(): sys.stderr.write("Warning: current implementation ignores anything after :LP or :LPH on same line\n") # TODO
     elif escaping:
         out.append(line+"\n")
     elif not line: pass
@@ -1890,7 +1893,7 @@ def getLY(score,headers=None,have_final_barline=True):
        out = re.sub(r'(%\{ bar [0-9]*: %\} | \\major ) *r(?=[^ ]*(?: [_^]"[^"]*")?[| ]* (?:\\noPageBreak )?(?:%\{ bar|\\bar|\}$))',r"\g<1>R",out)
        out = out.replace(r"\new RhythmicStaff \with {",r"\new RhythmicStaff \with { \override VerticalAxisGroup.default-staff-staff-spacing = #'((basic-distance . 6) (minimum-distance . 6) (stretchability . 0)) ") # don't let it hang too far up in the air
    if not_angka: out=out.replace("make-bold-markup","make-simple-markup")
-   return out,maxBeams,lyrics,headers,out_of_line_LP
+   return out,maxBeams,lyrics,headers,LP_between_head_and_first_score
 
 def process_input(inDat):
  global unicode_mode
@@ -1918,8 +1921,8 @@ def process_input(inDat):
     for partNo,part in enumerate(parts):
      if partNo==0 or separate_scores:
          ret.append(score_start())
-     out,maxBeams,lyrics,headers,out_of_line_LP = getLY(part,headers,partNo==0 or separate_scores) # assume 1st part doesn't have 'tacet al fine'
-     ret[0] += out_of_line_LP
+     out,maxBeams,lyrics,headers,LP_between_head_and_first_score = getLY(part,headers,partNo==0 or separate_scores) # assume 1st part doesn't have 'tacet al fine'
+     if not midi: ret[0] += LP_between_head_and_first_score # (if midi it will already have been done, but we do catch LPH from any part)
      if len(parts)>1 and "instrument" in headers:
          inst = headers["instrument"]
          del headers["instrument"]

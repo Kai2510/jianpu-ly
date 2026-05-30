@@ -1210,6 +1210,20 @@ def xml2jianpu(x):
         elif name=="accent": note[0][5]     += r" \accent"
         elif name=="trill-mark": note[0][5] += r" \trill"
         elif name=="mordent": note[0][5]    += r" \mordent"
+        elif name=="inverted-mordent": note[0][5] += r" \prall"
+        elif name=="turn": note[0][5]       += r" \turn"
+        elif name=="staccatissimo": note[0][5] += r" \staccatissimo"
+        elif name=="marcato": note[0][5]    += r" \marcato"
+        elif name=="up-bow": note[0][5]     += r" \upbow"
+        elif name=="down-bow": note[0][5]   += r" \downbow"
+        elif name=="strong-accent": note[0][5] += r" \accent"
+        elif name=="tremolo" and dat[1].get("type","")=="single":
+            n = int(dat[0].strip()) if dat[0].strip() else 1
+            if n >= 3: note[0][5] += r" ///"
+        elif name=="wavy-line": note[0][5] += {"start":r" \startTrillSpan","stop":r" \stopTrillSpan"}.get(dat[1].get("type",""),"")
+        elif name=="harmonic": note[0][5]   += r" \flageolet"
+        elif name=="open": note[0][5]       += r" \open"
+        elif name=="snap-pizzicato": note[0][5] += r" \snappizzicato"
         elif name in "ppppp pppp ppp pp p mp mf f ff fff ffff fffff fp sf sfz n rfz".split(): note[0][5] += " \\"+name
         elif name=="words":
             toAdd = r' ^"'+dat[0].strip().replace('"',"'")+'"'
